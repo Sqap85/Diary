@@ -13,7 +13,6 @@ public class DiaryManager {
 
     // Kullanıcı kayıt işlemi
     public boolean register(String username, String password) {
-        // Check if username or password is empty
         if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             System.err.println("Kullanıcı adı ve şifre boş olamaz.");
             return false;  // Return false if either is empty
@@ -65,11 +64,13 @@ public class DiaryManager {
     }
 
     // Günlükleri görüntüleme
-    public List<String> viewEntries() {
+    public List<String> viewEntries(LocalDate startDate, LocalDate endDate) {
         List<String> entries = new ArrayList<>();
-        String sql = "SELECT id, title, content, date FROM diary_entries WHERE user_id = ? ORDER BY id";
+        String sql = "SELECT id, title, content, date FROM diary_entries WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date";
         try (PreparedStatement pstmt = dbManager.getConnection().prepareStatement(sql)) {
             pstmt.setInt(1, currentUserId);
+            pstmt.setString(2, startDate.toString());
+            pstmt.setString(3, endDate.toString());
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 entries.add("ID: " + rs.getInt("id") + ", Title: " + rs.getString("title") +
@@ -91,6 +92,21 @@ public class DiaryManager {
             System.out.println("Günlük başarıyla silindi.");
         } catch (SQLException e) {
             System.err.println("Günlük silinirken hata: " + e.getMessage());
+        }
+    }
+
+    // Günlük güncelleme
+    public void updateEntry(int entryId, String newTitle, String newContent) {
+        String sql = "UPDATE diary_entries SET title = ?, content = ? WHERE id = ? AND user_id = ?";
+        try (PreparedStatement pstmt = dbManager.getConnection().prepareStatement(sql)) {
+            pstmt.setString(1, newTitle);
+            pstmt.setString(2, newContent);
+            pstmt.setInt(3, entryId);
+            pstmt.setInt(4, currentUserId);
+            pstmt.executeUpdate();
+            System.out.println("Günlük başarıyla güncellendi.");
+        } catch (SQLException e) {
+            System.err.println("Günlük güncellenirken hata: " + e.getMessage());
         }
     }
 

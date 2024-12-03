@@ -27,23 +27,24 @@ public class DatabaseManager {
         String dropDiaryTable = "DROP TABLE IF EXISTS diary_entries;";  // Drop the old table if it exists
 
         String createUsersTable = """
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE,
-                    password TEXT
-                );
-                """;
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE,
+                password TEXT
+            );
+            """;
 
         String createDiaryTable = """
-                CREATE TABLE IF NOT EXISTS diary_entries (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    user_id INTEGER,
-                    title TEXT,
-                    content TEXT,
-                    date TEXT,  -- Ensure 'date' column is added
-                    FOREIGN KEY(user_id) REFERENCES users(id)
-                );
-                """;
+            CREATE TABLE IF NOT EXISTS diary_entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                title TEXT,
+                content TEXT,
+                date TEXT,  -- Ensure 'date' column is added
+                category TEXT,  -- Add category column
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            );
+            """;
 
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(dropDiaryTable);  // Drop the old diary_entries table if it exists
@@ -54,7 +55,6 @@ public class DatabaseManager {
             System.err.println("Tablolar oluşturulurken hata: " + e.getMessage());
         }
     }
-
     public Connection getConnection() {
         return connection;
     }

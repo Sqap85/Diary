@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.List;
 
 public class DiaryDashboard extends JFrame {
@@ -23,12 +24,14 @@ public class DiaryDashboard extends JFrame {
 
         JButton addButton = new JButton("Add Entry");
         JButton viewButton = new JButton("View Entries");
+        JButton updateButton = new JButton("Update Entry");
         JButton deleteButton = new JButton("Delete Entry");
         JButton logoutButton = new JButton("Logout");
 
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
+        JPanel buttonPanel = new JPanel(new GridLayout(5, 1));
         buttonPanel.add(addButton);
         buttonPanel.add(viewButton);
+        buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(logoutButton);
 
@@ -45,11 +48,29 @@ public class DiaryDashboard extends JFrame {
             }
         });
 
-        // View Entries Action
+        // View Entries Action with filter (last 30 days)
         viewButton.addActionListener(e -> {
-            List<String> entries = manager.viewEntries();
+            // Get start and end date for filter, for example last 30 days
+            LocalDate endDate = LocalDate.now();
+            LocalDate startDate = endDate.minusDays(30);  // Last 30 days
+
+            List<String> entries = manager.viewEntries(startDate, endDate); // Pass the date range
             diaryListModel.clear();
             entries.forEach(diaryListModel::addElement);
+        });
+
+        // Update Entry Action
+        updateButton.addActionListener(e -> {
+            int selectedIndex = diaryList.getSelectedIndex();
+            if (selectedIndex >= 0) {
+                String selectedEntry = diaryListModel.getElementAt(selectedIndex);
+                String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
+                int entryId = Integer.parseInt(entryIdStr);
+                String newTitle = JOptionPane.showInputDialog(this, "New Title:");
+                String newContent = JOptionPane.showInputDialog(this, "New Content:");
+                manager.updateEntry(entryId, newTitle, newContent);
+                updateDiaryList();
+            }
         });
 
         // Delete Entry Action
@@ -57,20 +78,10 @@ public class DiaryDashboard extends JFrame {
             int selectedIndex = diaryList.getSelectedIndex();
             if (selectedIndex >= 0) {
                 String selectedEntry = diaryListModel.getElementAt(selectedIndex);
-                try {
-                    String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
-                    if (!entryIdStr.isEmpty()) {
-                        int entryId = Integer.parseInt(entryIdStr);
-                        manager.deleteEntry(entryId);
-                        updateDiaryList();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Invalid entry ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid entry ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Please select an entry to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
+                int entryId = Integer.parseInt(entryIdStr);
+                manager.deleteEntry(entryId);
+                updateDiaryList();
             }
         });
 
@@ -84,7 +95,7 @@ public class DiaryDashboard extends JFrame {
     }
 
     private void updateDiaryList() {
-        List<String> entries = manager.viewEntries();
+        List<String> entries = manager.viewEntries(LocalDate.now().minusDays(30), LocalDate.now()); // Default to last 30 days
         diaryListModel.clear();
         entries.forEach(diaryListModel::addElement);
     }

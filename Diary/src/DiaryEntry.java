@@ -1,5 +1,4 @@
 import java.time.LocalDate;
-
 public class DiaryEntry {
     private int entryID;
     private String title;
@@ -57,7 +56,6 @@ public class DiaryEntry {
         this.category = category;
     }
 
-    // Method to return the string representation of the diary entry
     @Override
     public String toString() {
         return "ID: " + entryID + ", Title: " + title + ", Date: " + date + ", Category: " + category + "\nContent: " + content;
