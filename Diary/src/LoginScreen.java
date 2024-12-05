@@ -47,10 +47,14 @@ public class LoginScreen extends JFrame {
             String password = new String(passwordField.getPassword());
             if (manager.register(username, password)) {
                 JOptionPane.showMessageDialog(this, "Registration Successful! Please log in.");
+                // Temizleme işlemi
+                usernameField.setText("");  // Kullanıcı adı kutusunu temizle
+                passwordField.setText("");  // Parola kutusunu temizle
             } else {
                 JOptionPane.showMessageDialog(this, "Username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
     }
 
     private void openDiaryDashboard() {
