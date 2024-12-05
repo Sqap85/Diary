@@ -48,15 +48,66 @@ public class DiaryDashboard extends JFrame {
             }
         });
 
-        // View Entries Action with filter (last 30 days)
         viewButton.addActionListener(e -> {
-            // Get start and end date for filter, for example last 30 days
-            LocalDate endDate = LocalDate.now();
-            LocalDate startDate = endDate.minusDays(30);  // Last 30 days
+            // Kullanıcıya seçim yapmak için bir seçenek sun
+            String[] options = {"Filter by Date", "View All", "Search by Title"};
+            int choice = JOptionPane.showOptionDialog(
+                    this,
+                    "How would you like to view the entries?",
+                    "View Entries",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
 
-            List<String> entries = manager.viewEntries(startDate, endDate); // Pass the date range
-            diaryListModel.clear();
-            entries.forEach(diaryListModel::addElement);
+            switch (choice) {
+                case 0: // Filter by Date
+                    DateRangePicker datePicker = new DateRangePicker(this);
+                    datePicker.setVisible(true);
+
+                    if (datePicker.isConfirmed()) {
+                        LocalDate startDate = datePicker.getStartDate();
+                        LocalDate endDate = datePicker.getEndDate();
+
+                        List<String> entries = manager.viewEntries(startDate, endDate);
+                        diaryListModel.clear();
+                        if (entries.isEmpty()) {
+                            JOptionPane.showMessageDialog(this, "No entries found for the selected date range.");
+                        } else {
+                            entries.forEach(diaryListModel::addElement);
+                        }
+                    }
+                    break;
+
+                case 1: // View All
+                    List<String> allEntries = manager.viewEntries(LocalDate.MIN, LocalDate.now());
+                    diaryListModel.clear();
+                    if (allEntries.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "No entries found.");
+                    } else {
+                        allEntries.forEach(diaryListModel::addElement);
+                    }
+                    break;
+
+                case 2: // Search by Title
+                    String title = JOptionPane.showInputDialog(this, "Enter the title to search:");
+                    if (title != null && !title.trim().isEmpty()) {
+                        List<String> matchingEntries = manager.searchEntriesByTitle(title);
+                        diaryListModel.clear();
+                        if (matchingEntries.isEmpty()) {
+                            JOptionPane.showMessageDialog(this, "No entries found with the given title.");
+                        } else {
+                            matchingEntries.forEach(diaryListModel::addElement);
+                        }
+                    }
+                    break;
+
+                default:
+                    // Kullanıcı bir seçim yapmadan çıktı
+                    break;
+            }
         });
 
         // Update Entry Action
@@ -99,4 +150,5 @@ public class DiaryDashboard extends JFrame {
         diaryListModel.clear();
         entries.forEach(diaryListModel::addElement);
     }
+
 }

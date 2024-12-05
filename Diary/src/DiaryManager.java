@@ -109,6 +109,23 @@ public class DiaryManager {
             System.err.println("Günlük güncellenirken hata: " + e.getMessage());
         }
     }
+    // Başlığa göre arama yapma
+    public List<String> searchEntriesByTitle(String title) {
+        List<String> entries = new ArrayList<>();
+        String sql = "SELECT id, title, content, date FROM diary_entries WHERE user_id = ? AND title LIKE ? ORDER BY date";
+        try (PreparedStatement pstmt = dbManager.getConnection().prepareStatement(sql)) {
+            pstmt.setInt(1, currentUserId);
+            pstmt.setString(2, "%" + title + "%"); // Başlığın herhangi bir kısmını eşleştir
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                entries.add("ID: " + rs.getInt("id") + ", Title: " + rs.getString("title") +
+                        ", Date: " + rs.getString("date") + "\nContent: " + rs.getString("content"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Başlığa göre arama sırasında hata: " + e.getMessage());
+        }
+        return entries;
+    }
 
     // Oturumu kapatma
     public void logout() {
