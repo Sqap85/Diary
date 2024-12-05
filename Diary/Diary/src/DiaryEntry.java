@@ -1,21 +1,18 @@
 import java.time.LocalDate;
+
 public class DiaryEntry {
     private int entryID;
     private String title;
     private String content;
     private LocalDate date;
-    private String category;
 
-    // Constructor
-    public DiaryEntry(int entryID, String title, String content, LocalDate date, String category) {
+    public DiaryEntry(int entryID, String title, String content, LocalDate date) {
         this.entryID = entryID;
         this.title = title;
         this.content = content;
         this.date = date;
-        this.category = category;
     }
 
-    // Getters and Setters
     public int getEntryID() {
         return entryID;
     }
@@ -48,16 +45,8 @@ public class DiaryEntry {
         this.date = date;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     @Override
     public String toString() {
-        return "ID: " + entryID + ", Title: " + title + ", Date: " + date + ", Category: " + category + "\nContent: " + content;
+        return "ID: " + entryID + ", Title: " + title + ", Date: " + date + "\nContent: " + content;
     }
 }
