@@ -141,8 +141,14 @@ public class DiaryDashboard extends JFrame {
                 String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
                 int entryId = Integer.parseInt(entryIdStr);
 
+                // Mevcut başlık ve içerik bilgilerini alıyoruz
+                DiaryEntry existingEntry = manager.getEntryById(entryId);
+                String existingTitle = existingEntry.getTitle();
+                String existingContent = existingEntry.getContent();
+
                 while (true) {
-                    String newTitle = JOptionPane.showInputDialog(this, "New Title:");
+                    // Başlık için bir input dialogu gösteriyoruz, varsayılan olarak mevcut başlık ile
+                    String newTitle = JOptionPane.showInputDialog(this, "New Title:", existingTitle);
                     if (newTitle == null) {
                         // Kullanıcı çıkma tuşuna bastı, işlem iptal edilir
                         break;
@@ -152,9 +158,9 @@ public class DiaryDashboard extends JFrame {
                         continue;
                     }
 
-                    // Başlık doğru girildiyse içerik isteme döngüsü
+                    // Başlık doğru girildiyse içerik için bir input dialogu gösteriyoruz, varsayılan olarak mevcut içerik ile
                     while (true) {
-                        String newContent = JOptionPane.showInputDialog(this, "New Content:");
+                        String newContent = JOptionPane.showInputDialog(this, "New Content:", existingContent);
                         if (newContent == null) {
                             // Kullanıcı çıkma tuşuna bastı, işlem iptal edilir
                             break;
