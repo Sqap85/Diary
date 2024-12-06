@@ -188,8 +188,15 @@ public class DiaryDashboard extends JFrame {
                 String selectedEntry = diaryListModel.getElementAt(selectedIndex);
                 String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
                 int entryId = Integer.parseInt(entryIdStr);
-                manager.deleteEntry(entryId);
-                updateDiaryList();
+
+                // Silme işlemi
+                int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this entry?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    manager.deleteEntry(entryId);
+                    updateDiaryList(); // Günlük listesi güncellenir
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "No entry selected! Please select an entry to delete.", "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
 
