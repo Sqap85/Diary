@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -33,11 +32,16 @@ public class LoginScreen extends JFrame {
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            if (manager.login(username, password)) {
-                JOptionPane.showMessageDialog(this, "Login Successful!");
-                openDiaryDashboard();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username and Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid username or password.", "Error", JOptionPane.ERROR_MESSAGE);
+                if (manager.login(username, password)) {
+                    JOptionPane.showMessageDialog(this, "Login Successful!");
+                    openDiaryDashboard();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Invalid username or password.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -45,16 +49,20 @@ public class LoginScreen extends JFrame {
         registerButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            if (manager.register(username, password)) {
-                JOptionPane.showMessageDialog(this, "Registration Successful! Please log in.");
-                // Temizleme işlemi
-                usernameField.setText("");  // Kullanıcı adı kutusunu temizle
-                passwordField.setText("");  // Parola kutusunu temizle
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username Or Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+                if (manager.register(username, password)) {
+                    JOptionPane.showMessageDialog(this, "Registration Successful! Please log in.");
+                    // Temizleme işlemi
+                    usernameField.setText("");  // Kullanıcı adı kutusunu temizle
+                    passwordField.setText("");  // Parola kutusunu temizle
+                } else {
+                    JOptionPane.showMessageDialog(this, "Username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
-
     }
 
     private void openDiaryDashboard() {
