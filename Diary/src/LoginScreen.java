@@ -12,11 +12,12 @@ public class LoginScreen extends JFrame {
         setLocationRelativeTo(null);
 
         // Login Panel
-        JPanel panel = new JPanel(new GridLayout(3, 2));
-        JLabel userLabel = new JLabel("Username:");
-        JLabel passLabel = new JLabel("Password:");
+        JPanel panel = new JPanel(new GridLayout(4, 2));
+        JLabel userLabel = new JLabel(" Username:");
+        JLabel passLabel = new JLabel(" Password:");
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
+        JCheckBox showPasswordCheckBox = new JCheckBox("Show Password");
         JButton loginButton = new JButton("Login");
         JButton registerButton = new JButton("Register");
 
@@ -24,9 +25,20 @@ public class LoginScreen extends JFrame {
         panel.add(usernameField);
         panel.add(passLabel);
         panel.add(passwordField);
+        panel.add(showPasswordCheckBox); // Checkbox ekleniyor
+        panel.add(new JLabel()); // Layout uyumu için boş bir alan ekleniyor
         panel.add(loginButton);
         panel.add(registerButton);
         add(panel);
+
+        // Show Password Action
+        showPasswordCheckBox.addActionListener(e -> {
+            if (showPasswordCheckBox.isSelected()) {
+                passwordField.setEchoChar((char) 0); // Parola maskesi kaldırılıyor
+            } else {
+                passwordField.setEchoChar('•'); // Parola maskesi geri konuluyor
+            }
+        });
 
         // Login Action
         loginButton.addActionListener(e -> {
@@ -34,7 +46,7 @@ public class LoginScreen extends JFrame {
             String password = new String(passwordField.getPassword());
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username and Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Username or Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (manager.login(username, password)) {
                     JOptionPane.showMessageDialog(this, "Login Successful!");
@@ -56,8 +68,8 @@ public class LoginScreen extends JFrame {
                 if (manager.register(username, password)) {
                     JOptionPane.showMessageDialog(this, "Registration Successful! Please log in.");
                     // Temizleme işlemi
-                    usernameField.setText("");  // Kullanıcı adı kutusunu temizle
-                    passwordField.setText("");  // Parola kutusunu temizle
+                    usernameField.setText(""); // Kullanıcı adı kutusunu temizle
+                    passwordField.setText(""); // Parola kutusunu temizle
                 } else {
                     JOptionPane.showMessageDialog(this, "Username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
