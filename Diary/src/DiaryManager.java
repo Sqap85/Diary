@@ -127,6 +127,27 @@ public class DiaryManager {
         return entries;
     }
 
+    // Günlük ID'sine göre mevcut girdiyi alır
+    public DiaryEntry getEntryById(int entryId) {
+        String sql = "SELECT id, title, content, date FROM diary_entries WHERE id = ? AND user_id = ?";
+        try (PreparedStatement pstmt = dbManager.getConnection().prepareStatement(sql)) {
+            pstmt.setInt(1, entryId);
+            pstmt.setInt(2, currentUserId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new DiaryEntry(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        LocalDate.parse(rs.getString("date"))
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Günlük verisi alınırken hata: " + e.getMessage());
+        }
+        return null; // Eğer bulamazsa null döner
+    }
+
     // Oturumu kapatma
     public void logout() {
         currentUserId = -1;
