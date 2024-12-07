@@ -151,7 +151,7 @@ public class DiaryDashboard extends JFrame {
                     return;
                 }
 
-                manager.updateEntry(selectedEntry.getEntryIDId(), newTitle, newContent);
+                manager.updateEntry(selectedEntry.getEntryID(), newTitle, newContent);
                 updateDiaryList(); // Günlük listesi güncellenir
             } else {
                 JOptionPane.showMessageDialog(this, "No entry selected! Please select an entry to update.", "Error", JOptionPane.WARNING_MESSAGE);
@@ -168,7 +168,7 @@ public class DiaryDashboard extends JFrame {
                     // Günlüğü başlık ve kullanıcı ID'sine göre sil
                     List<DiaryEntry> entries = manager.getEntries(); // Yeni bir metotla tüm girdileri alın
                     DiaryEntry entryToDelete = entries.get(selectedIndex); // Seçili girişe ulaşın
-                    manager.deleteEntry(entryToDelete.getEntryIDId());
+                    manager.deleteEntry(entryToDelete.getEntryID());
                     updateDiaryList(); // Günlük listesi güncellenir
                 }
             } else {
