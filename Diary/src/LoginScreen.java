@@ -47,6 +47,8 @@ public class LoginScreen extends JFrame {
 
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Username or Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (username.contains(" ") || password.contains(" ")) {
+                JOptionPane.showMessageDialog(this, "Username or Password cannot contain spaces.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (manager.login(username, password)) {
                     JOptionPane.showMessageDialog(this, "Login Successful!");
@@ -57,19 +59,21 @@ public class LoginScreen extends JFrame {
             }
         });
 
-        // Register Action
+// Register Action
         registerButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username Or Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Username or Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (username.contains(" ") || password.contains(" ")) {
+                JOptionPane.showMessageDialog(this, "Username or Password cannot contain spaces.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (manager.register(username, password)) {
                     JOptionPane.showMessageDialog(this, "Registration Successful! Please log in.");
-                    // Temizleme işlemi
-                    usernameField.setText(""); // Kullanıcı adı kutusunu temizle
-                    passwordField.setText(""); // Parola kutusunu temizle
+                    // Clear fields after successful registration
+                    usernameField.setText(""); // Clear username field
+                    passwordField.setText(""); // Clear password field
                 } else {
                     JOptionPane.showMessageDialog(this, "Username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
