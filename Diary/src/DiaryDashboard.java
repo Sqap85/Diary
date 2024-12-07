@@ -136,69 +136,46 @@ public class DiaryDashboard extends JFrame {
         updateButton.addActionListener(e -> {
             int selectedIndex = diaryList.getSelectedIndex();
             if (selectedIndex >= 0) {
-                // Seçilen öğeyi al
-                String selectedEntry = diaryListModel.getElementAt(selectedIndex);
-                String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
-                int entryId = Integer.parseInt(entryIdStr);
+                List<DiaryEntry> entries = manager.getEntries();
+                DiaryEntry selectedEntry = entries.get(selectedIndex);
 
-                // Mevcut başlık ve içeriği almak
-                String currentTitle = selectedEntry.split(",")[1].replace("Title:", "").trim();
-                String currentContent = selectedEntry.split("\n")[1].replace("Content:", "").trim();
-
-                // Başlık ve içerik için giriş kutuları göster
-                String newTitle = JOptionPane.showInputDialog(this, "New Title:", currentTitle);
-                if (newTitle == null) {
-                    return; // Kullanıcı iptal etti
-                }
-                if (newTitle.trim().isEmpty()) {
+                String newTitle = JOptionPane.showInputDialog(this, "New Title:", selectedEntry.getTitle());
+                if (newTitle == null || newTitle.trim().isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Title cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-                    return; // Başlık boş olamaz
+                    return;
                 }
 
-                String newContent = JOptionPane.showInputDialog(this, "New Content:", currentContent);
-                if (newContent == null) {
-                    return; // Kullanıcı iptal etti
-                }
-                if (newContent.trim().isEmpty()) {
+                String newContent = JOptionPane.showInputDialog(this, "New Content:", selectedEntry.getContent());
+                if (newContent == null || newContent.trim().isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-                    return; // İçerik boş olamaz
+                    return;
                 }
 
-                // Kullanıcı onayı almak için onay penceresi ekleyelim
-                int confirm = JOptionPane.showConfirmDialog(this,
-                        "Are you sure you want to update this entry?",
-                        "Confirm Update",
-                        JOptionPane.YES_NO_OPTION);
-
-                if (confirm == JOptionPane.YES_OPTION) {
-                    // Güncelleme işlemi
-                    manager.updateEntry(entryId, newTitle, newContent);
-                    updateDiaryList(); // Günlük listesi güncellenir
-                    JOptionPane.showMessageDialog(this, "Entry updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                }
+                manager.updateEntry(selectedEntry.getEntryIDId(), newTitle, newContent);
+                updateDiaryList(); // Günlük listesi güncellenir
             } else {
                 JOptionPane.showMessageDialog(this, "No entry selected! Please select an entry to update.", "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
 
+
         // Delete Entry Action
         deleteButton.addActionListener(e -> {
             int selectedIndex = diaryList.getSelectedIndex();
             if (selectedIndex >= 0) {
-                String selectedEntry = diaryListModel.getElementAt(selectedIndex);
-                String entryIdStr = selectedEntry.split(",")[0].replace("ID:", "").trim();
-                int entryId = Integer.parseInt(entryIdStr);
-
-                // Silme işlemi
                 int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this entry?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    manager.deleteEntry(entryId);
+                    // Günlüğü başlık ve kullanıcı ID'sine göre sil
+                    List<DiaryEntry> entries = manager.getEntries(); // Yeni bir metotla tüm girdileri alın
+                    DiaryEntry entryToDelete = entries.get(selectedIndex); // Seçili girişe ulaşın
+                    manager.deleteEntry(entryToDelete.getEntryIDId());
                     updateDiaryList(); // Günlük listesi güncellenir
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "No entry selected! Please select an entry to delete.", "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
+
 
         // Logout Action
         logoutButton.addActionListener(e -> {
@@ -210,9 +187,10 @@ public class DiaryDashboard extends JFrame {
     }
 
     private void updateDiaryList() {
-        List<String> entries = manager.viewEntries(LocalDate.now().minusDays(30), LocalDate.now()); // Default to last 30 days
+        List<String> entries = manager.viewEntries(LocalDate.now().minusDays(30), LocalDate.now());
         diaryListModel.clear();
         entries.forEach(diaryListModel::addElement);
     }
+
 
 }
